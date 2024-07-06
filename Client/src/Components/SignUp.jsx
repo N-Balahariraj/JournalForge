@@ -11,7 +11,7 @@ const Signup = () => {
         const name = event.target[0].value;
         const email = event.target[1].value;
         const password = event.target[2].value;
-        fetch('http://localhost:4500/api/Register', {
+        fetch('https://journalforge.onrender.com/api/Register', {
             method: 'POST',
             body: JSON.stringify({
                 name : name,

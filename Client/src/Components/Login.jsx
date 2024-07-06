@@ -9,7 +9,7 @@ const Login = ({setUser}) => {
         event.preventDefault();
         const email = event.target[0].value;
         const password = event.target[1].value;
-        fetch('http://localhost:4500/api/Login', {
+        fetch('https://journalforge.onrender.com/api/Login', {
             method: 'POST',
             body: JSON.stringify({
                 email: email,

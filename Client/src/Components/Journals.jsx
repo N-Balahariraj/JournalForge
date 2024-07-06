@@ -18,7 +18,7 @@ export default function Journals() {
   }
 
   function fetchJournals() {
-    fetch('http://localhost:4500/Journals')
+    fetch('https://journalforge.onrender.com/Journals')
       .then(response => response.json())
       .then(data => {
         console.log(data);
