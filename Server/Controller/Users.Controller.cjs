@@ -2,58 +2,160 @@ const UserModel = require("../Model/Users.Model.cjs");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 
-exports.Register = (req, res) => {
+exports.Register = async (req, res) => {
   const { name, email, password } = req.body;
-  newUser = new UserModel({
-    name,
-    email,
-    password: bcrypt.hashSync(password, 5),
-  });
-  UserModel.findOne({ email })
-    .then((result) => {
-      if (result) {
-        res.status(400).json({ message: "User Already Exist" });
-        return;
-      }
-      newUser.save().then((result) => {
-        res
-          .status(200)
-          .json({ message: "User Registered Successfully", details: result });
+
+  try {
+    const user = await UserModel.findOne({ email });
+
+    if (user) {
+      throw new Error({
+        status: 409,
+        message: "User already exist",
       });
-    })
-    .catch((err) => {
-      res.status(500).send({ message: err.message });
+    }
+
+    const newUser = await UserModel.create({
+      name: name,
+      email: email,
+      password: bcrypt.hashSync(password, 19),
     });
+
+    if (!newUser.ok) {
+      throw new Error({
+        status: 500,
+        message: "Server error. User was not registered, try again later",
+      });
+    }
+
+    res.status(201).send({ message: "New user created successfully" });
+  } 
+  
+  catch (error) {
+    console.log("error : ", error);
+    res.status(error.status || 500).send({
+      message: error.message,
+    });
+  }
 };
 
-exports.Login = (req, res) => {
+const cookieOptions = {
+  SameSite: none,
+  Secure: true,
+  Partition : true,
+  Domain: "JournalForge.netlify.app",
+  Path: "/",
+};
+
+exports.Login = async (req, res) => {
   const { email, password } = req.body;
 
-  UserModel.findOne({ email }).then((result) => {
-    if (!result) {
-      res.status(404).send({ message: "The user have not Registered" });
-      return;
-    }
+  try {
+    const user = await UserModel.findOne({ email });
 
-    let isValidPassword = bcrypt.compareSync(password, result.password);
-
-    if (isValidPassword) {
-      let Token = jwt.sign({ id: result._id }, "Secret Key");
-      res.status(200).send({
-        User: {
-          name: result.name,
-          email: result.email,
-          password: result.password,
-        },
-        Token: Token,
+    if (!user) {
+      throw new Error({
+        status: 403,
+        message: "The specified user is not registered",
       });
-      return;
     }
 
-    res.status(401).send({ message: "Password is Incorrect" });
-  });
+    const validPass = bcrypt.compareSync(password, user.password);
+
+    if (!validPass) {
+      throw new Error({
+        status: 403,
+        message: "The password is incorrect",
+      });
+    }
+
+    const payload = {
+      id: user._id,
+      name: user.name,
+    };
+
+    const accessToken = jwt.sign(payload, process.env.ACCESS_TOKEN_SECRET, {
+      expiresIn: "15m",
+    });
+    const refreshToken = jwt.sign(payload, process.env.REFRESH_TOKEN_SECRET, {
+      expiresIn: "24h",
+    });
+
+    cookie.set("ACCESS_TOKEN", accessToken, cookieOptions);
+    cookie.set("REFRESH_TOKEN", refreshToken, cookieOptions);
+    res.status(200).send({ message: "User logged In Successfully" });
+  } 
+  
+  catch (error) {
+    console.log("error : ", error);
+    res
+      .status(error.status || 500)
+      .send(error.message || { message: "User was unable to login" });
+  }
 };
 
-exports.EditProfile = (req, res) => {};
+exports.EditProfile = async (req, res) => {
+  const id = req.user.id;
+  const { name, email, password } = req.body;
 
-exports.DeleteAcc = (req, res) => {};
+  try {
+    const user = await UserModel.findByIdAndUpdate(
+      { _id: id },
+      {
+        $set: { name: name, email: email, password: password },
+      },
+      {new : true}
+    );
+
+    if (!user.ok)
+      throw new Error({
+        status: 500,
+        message:
+          "Server error. Profile not updated, try changing the credentials ",
+      });
+
+    res.status(200).send({ message: "The profile updated successfully" });
+  } 
+  
+  catch (error) {
+    console.log("error : ", error);
+    res.status(error.status || 500).send(
+      error.message || {
+        message: "Server error. Profile not updated, try again later",
+      }
+    );
+  }
+};
+
+exports.DeleteAcc = async (req, res) => {
+  const id = req.user.id;
+
+  try {
+    const user = await UserModel.findByIdAndDelete({ id });
+    if (!user)
+      throw new Error({
+        status: 403,
+        message: "The specified user does not exist",
+      });
+    res
+      .status(200)
+      .send({ message: "Your account has been deleted successfully" });
+  } 
+  
+  catch (error) {
+    console.log("error : ", error);
+    res.status(500).send({
+      message: "Server error. Unable to delete the account, try again later",
+    });
+  }
+};
+
+exports.refreshToken = async (req, res) => {
+  const freshToken = jwt.sign(req.user, process.env.REFRESH_TOKEN_SECRET, {
+    expiresIn: "15m",
+  });
+
+  cookie.set("ACCESS_TOKEN", freshToken, cookieOptions);
+
+  res.status(200).send({ message: "The token refreshed successfully" });
+};

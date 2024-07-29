@@ -1,0 +1,17 @@
+const mongoose = require('mongoose')
+require('dotenv').config()
+
+const dbUrl = process.env.DATABASE_URL
+
+// DB Connection
+async function ConnectToDb(){
+    try{
+        await mongoose.connect(dbUrl) 
+        console.log("DB Connection established ;)")
+    }
+    catch(e){
+        console.log("DB Connection Couldn't be established")
+    }
+}
+
+module.exports = ConnectToDb
