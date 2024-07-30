@@ -16,11 +16,10 @@ exports.create = async (req, res) => {
       desc,
     });
 
-    if (!newJournal)
-      throw new Error({
-        status: 500,
-        message: "Server error. Try again later",
-      });
+    if (!newJournal){
+        res.status(500).send({message: "Server error. Try again later"})
+        return
+      };
 
     const addJournal = await userModal.updateOne(
       { _id: req.user.id },
@@ -29,11 +28,10 @@ exports.create = async (req, res) => {
       }
     );
 
-    if (!addJournal)
-      throw new Error({
-        status: 500,
-        message: "Server error. Journal not published, try again later",
-      });
+    if (!addJournal){
+        res.status(500).send({message: "Server error. Journal not published, try again later"})
+        return
+      };
 
     res.status(201).send({ message: "New journal published successfully " });
   } 
@@ -53,24 +51,20 @@ exports.create = async (req, res) => {
 
 // Read
 exports.read = async (req, res) => {
-  const userId = req.user.id
 
   try {
-    const user = await userModal.findById({_id : userId})
     const journals = await JournalModel.find()
 
-    if(!user || !journals)
-      throw new Error({
-        status : 404,
-        message : "User or journals not found"
-      })
+    if(!journals){
+        res.status(404).send({message : "User or journals not found"})
+        return
+      }
 
     res
       .status(200)
       .send({
         message : "Journals retrieved successfully",
         journals : journals,
-        myJournals : user.journals
       })
   } 
   
@@ -88,19 +82,17 @@ exports.editJournal = async (req, res) => {
 
   try {
     const editedJournal = await JournalModel.findOneAndUpdate(
-      { oriTitle },
+      { title : oriTitle },
       {
         $set: { title, pic, desc },
       },
       { new: true }
     );
 
-    if (!editedJournal)
-      throw new Error({
-        status: 403,
-        message:
-          "Either the journal is not yours or the journal does not exist",
-      });
+    if (!editedJournal){
+        res.status(403).send({message:"Either the journal is not yours or the journal does not exist"})
+        return;
+      };
 
     res.status(200).send({ message: "The journal updated successfully" });
   } 
@@ -123,12 +115,10 @@ exports.delJournal = async (req, res) => {
   try {
     const journal = await JournalModel.findOneAndDelete({ title: oriTitle });
 
-    if (!journal)
-      throw new Error({
-        status: 403,
-        message:
-          "Either the journal is not published by you or the journal does not exist",
-      });
+    if (!journal){
+        res.status(403).send({message:"Either the journal is not published by you or the journal does not exist"})
+        return
+      };
 
     res.status(200).send({ message: "The journal deleted successfully" });
   } 

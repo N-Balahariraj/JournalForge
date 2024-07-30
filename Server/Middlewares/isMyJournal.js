@@ -1,17 +1,12 @@
 const userModal = require("../Model/Users.Model.cjs");
 
 exports.isMyJournal = async (req, res, next) => {
-  const userId = req.user.id;
+  const journals = req.user.journals;
+  const title = req.params.title
 
   try {
-    const user = userModal.findById(userId);
 
-    if (!user) {
-      res.status(404).send({ message: "User not found" });
-      return;
-    }
-
-    const myJournal = user.journals.includes(req.params.title);
+    const myJournal = journals.includes(title);
 
     if (!myJournal) {
       res.status(403).send({ message: "The jounals is not published by you" });

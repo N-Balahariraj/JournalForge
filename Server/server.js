@@ -3,7 +3,7 @@ const express = require('express')
 const bodyParser = require('body-parser')
 const cors = require('cors')
 const dotenv = require('dotenv')
-const ConnectToDb = require('./Config/dbConfig')
+const ConnectToDb = require('./Config/dbConfig.js')
 
 
 // Creating App
@@ -21,4 +21,9 @@ const port = process.env.PORT
 app.listen(port,()=>{
     console.log(`Listening the server at port ${port}...`)
 })
+
+// Connecting routes
+require('./Routes/journals.routes.js')(app)
+require('./Routes/users.routes.js')(app)
+
 

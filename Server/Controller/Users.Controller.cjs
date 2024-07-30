@@ -9,10 +9,8 @@ exports.Register = async (req, res) => {
     const user = await UserModel.findOne({ email });
 
     if (user) {
-      throw new Error({
-        status: 409,
-        message: "User already exist",
-      });
+      res.status(409).send({message : "The user already exist, try logging in"})
+      return;
     }
 
     const newUser = await UserModel.create({
@@ -21,11 +19,9 @@ exports.Register = async (req, res) => {
       password: bcrypt.hashSync(password, 19),
     });
 
-    if (!newUser.ok) {
-      throw new Error({
-        status: 500,
-        message: "Server error. User was not registered, try again later",
-      });
+    if (!newUser) {
+      res.status(500).send({message : "Server error. Try again later"})
+      return;
     }
 
     res.status(201).send({ message: "New user created successfully" });
@@ -40,7 +36,7 @@ exports.Register = async (req, res) => {
 };
 
 const cookieOptions = {
-  SameSite: none,
+  SameSite: 'none',
   Secure: true,
   Partition : true,
   Domain: "JournalForge.netlify.app",
@@ -54,19 +50,15 @@ exports.Login = async (req, res) => {
     const user = await UserModel.findOne({ email });
 
     if (!user) {
-      throw new Error({
-        status: 403,
-        message: "The specified user is not registered",
-      });
+      res.status(403).send({ message: "The specified user is not registered"})
+      return;
     }
 
     const validPass = bcrypt.compareSync(password, user.password);
 
     if (!validPass) {
-      throw new Error({
-        status: 403,
-        message: "The password is incorrect",
-      });
+      res.status(403).send({message : "The password is incorrect"})
+      return;
     }
 
     const payload = {
@@ -81,8 +73,8 @@ exports.Login = async (req, res) => {
       expiresIn: "24h",
     });
 
-    cookie.set("ACCESS_TOKEN", accessToken, cookieOptions);
-    cookie.set("REFRESH_TOKEN", refreshToken, cookieOptions);
+    res.cookie("ACCESS_TOKEN", accessToken, cookieOptions);
+    res.cookie("REFRESH_TOKEN", refreshToken, cookieOptions);
     res.status(200).send({ message: "User logged In Successfully" });
   } 
   
@@ -107,12 +99,10 @@ exports.EditProfile = async (req, res) => {
       {new : true}
     );
 
-    if (!user.ok)
-      throw new Error({
-        status: 500,
-        message:
-          "Server error. Profile not updated, try changing the credentials ",
-      });
+    if (!user){
+      res.status(500).send({ message: "Server error. Profile not updated, try changing the credentials "})
+      return
+    }
 
     res.status(200).send({ message: "The profile updated successfully" });
   } 
@@ -131,12 +121,11 @@ exports.DeleteAcc = async (req, res) => {
   const id = req.user.id;
 
   try {
-    const user = await UserModel.findByIdAndDelete({ id });
-    if (!user)
-      throw new Error({
-        status: 403,
-        message: "The specified user does not exist",
-      });
+    const user = await UserModel.findByIdAndDelete(id);
+    if (!user){
+      res.status(404).send({message : "The specified user does not exist"})
+      return
+    }
     res
       .status(200)
       .send({ message: "Your account has been deleted successfully" });
@@ -151,11 +140,15 @@ exports.DeleteAcc = async (req, res) => {
 };
 
 exports.refreshToken = async (req, res) => {
-  const freshToken = jwt.sign(req.user, process.env.REFRESH_TOKEN_SECRET, {
+  const payload = {
+    id : req.user.id,
+    name : req.user.name
+  }
+  const freshToken = jwt.sign(payload, process.env.ACCESS_TOKEN_SECRET, {
     expiresIn: "15m",
   });
 
-  cookie.set("ACCESS_TOKEN", freshToken, cookieOptions);
+  res.cookie("ACCESS_TOKEN", freshToken, cookieOptions);
 
   res.status(200).send({ message: "The token refreshed successfully" });
 };
