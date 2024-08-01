@@ -1,8 +1,8 @@
 import React from 'react'
 
-export default function JournalCards({title,pic,desc,setJournal}) {
+export default function Journal({id,title,pic,desc,pickJournal}) {
   return (
-    <div className='w-[90%] h-[50%] flex border-2 rounded-lg' onClick={()=>{setJournal()}}>
+    <div className='w-[90%] h-[50%] flex border-2 rounded-lg' onClick={()=>{pickJournal(id)}}>
       <div className="w-[45%] flex flex-col items-center border-2 rounded-md">
         <span className='text-lg font-semibold p-2'>{title}</span>
         <img src={pic} alt="JournalPic" className='h-[80%] w-[90%] rounded-lg' />

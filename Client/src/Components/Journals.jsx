@@ -1,53 +1,47 @@
 import React, { useEffect, useState } from 'react'
-import JournalCards from './JournalCards'
-import { useOutletContext } from 'react-router-dom'
+import Journal from '../UtilComponents/Journal'
 
-export default function Journals() {
-  const [searchJournal, setSearchJournal] = useState([])
-  const [selJournal, setJournal] = useState({})
-  const [search, setSearch] = useOutletContext()
-
-  function filterBySearchInput() {
-    const Filter = searchJournal.filter((Journal) => {
-      return Journal.title.toLowerCase().includes(search.toLowerCase());
-    });
-    setSearchJournal(Filter);
-
-    // if (search == "")
-    //   setSearchJournal(Journal)
-  }
-
-  function fetchJournals() {
-    fetch('https://journalforge.onrender.com/Journals')
-      .then(response => response.json())
-      .then(data => {
-        console.log(data);
-        setSearchJournal(data)
-        setJournal(data[0])
-      })
-      .catch(error => {
-        console.error('An error occurred:', error);
-      });
-  }
+export default function Journals({searchText}) {
+  const [journals, setJournals] = useState([])
+  const [jornals, searchJournals] = useState([])
+  const [journal, pickJournal] = useState({})
 
   useEffect(() => {
+    function fetchJournals() {
+      fetch(`${process.env.REACT_APP_GLOBALHOST}/Journals`)
+        .then(response => response.json())
+        .then(data => {
+          console.log(data);
+          searchJournals(data[0])
+          setJournals(data[0])
+        })
+        .catch(error => {
+          console.error('An error occurred:', error);
+        });
+    }
     fetchJournals()
   }, [])
 
   useEffect(() => {
-    filterBySearchInput()
-  }, [search])
+    function filterJournals() {
+      const filJournals = journals.filter((journal) => {
+        return journal.title.toLowerCase().includes(searchText.toLowerCase());
+      });
+      searchJournals(filJournals);
+    }
+    filterJournals()
+  }, [searchText])
 
   return (
     <div className='Journals'>
       <div className="w-[40%] h-[100%] border-2 p-2 flex flex-col items-center justify-around text-center font-Nunito">
-        <span className='text-3xl font-bold'>{selJournal.title}</span>
-        <img src={selJournal.pic} alt="" className='h-[50%] w-[90%] rounded-lg' />
-        <span>{selJournal.desc}</span>
+        <span className='text-3xl font-bold'>{journal.title}</span>
+        <img src={journal.pic} alt="" className='h-[50%] w-[90%] rounded-lg' />
+        <span>{journal.desc}</span>
       </div>
       <div className="w-[60%] h-[100%] border-2 p-2 flex flex-col items-center overflow-y-scroll gap-10">
-        {searchJournal.map((J) => {
-          return <JournalCards key={J._id} title={J.title} desc={J.desc} pic={J.pic} setJournal={setJournal} />
+        {jornals||journals?.map((J) => {
+          return <Journal key={J._id} id={J._id} title={J.title} desc={J.desc} pic={J.pic} pickJournal={pickJournal} />
         })}
       </div>
     </div>
