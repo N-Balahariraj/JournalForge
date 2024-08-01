@@ -36,9 +36,9 @@ exports.Register = async (req, res) => {
 };
 
 const cookieOptions = {
-  SameSite: 'none',
+  httpOnly: true,
   Secure: true,
-  Partition : true,
+  SameSite: 'None',
   Domain: "JournalForge.netlify.app",
   Path: "/",
 };
