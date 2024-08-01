@@ -17,7 +17,7 @@ const Login = ({ setUser }) => {
       return;
     }
 
-    fetch(`${process.env.REACT_APP_GLOBALHOST}/api/Login`, {
+    fetch(`${process.env.REACT_APP_LOCALHOST}/api/Login`, {
       method: "POST",
       credentials: "include",
       body: JSON.stringify({

@@ -8,7 +8,7 @@ export default function Journals({searchText}) {
 
   useEffect(() => {
     function fetchJournals() {
-      fetch(`${process.env.REACT_APP_GLOBALHOST}/Journals`)
+      fetch(`${process.env.REACT_APP_LOCALHOST}/Journals`)
         .then(response => response.json())
         .then(data => {
           console.log(data);

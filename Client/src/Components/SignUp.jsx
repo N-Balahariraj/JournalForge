@@ -19,7 +19,7 @@ const Signup = () => {
       return;
     }
 
-    fetch(`${process.env.REACT_APP_GLOBALHOST}/api/Register`, {
+    fetch(`${process.env.REACT_APP_LOCALHOST}/api/Register`, {
       method: "POST",
       body: JSON.stringify({
         name: name,
