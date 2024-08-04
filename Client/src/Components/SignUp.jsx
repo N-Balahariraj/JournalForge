@@ -5,7 +5,6 @@ import { registerValidation } from "../UtilFunctions/verifyCredentials";
 import Alert from "react-bootstrap/Alert";
 
 const Signup = () => {
-  const [user, setUser] = useOutletContext();
   const [alert, setAlert] = useState(false);
 
   const handleSignUp = (event) => {
@@ -19,7 +18,7 @@ const Signup = () => {
       return;
     }
 
-    fetch(`${process.env.REACT_APP_LOCALHOST}/api/Register`, {
+    fetch(`${import.meta.env.VITE_LOCALHOST}/api/Register`, {
       method: "POST",
       body: JSON.stringify({
         name: name,

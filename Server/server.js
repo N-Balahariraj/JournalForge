@@ -14,7 +14,7 @@ const app = express()
 dotenv.config()
 app.use(bodyParser.json())
 app.use(cors({
-    origin : ['http://localhost:3000','https://journalforge.netlify.app'],
+    origin : ['http://localhost:5173','https://journalforge.netlify.app'],
     credentials : true
 }))
 app.use(cookieParser())

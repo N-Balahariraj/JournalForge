@@ -75,7 +75,7 @@ exports.Login = async (req, res) => {
 
     res.cookie("ACCESS_TOKEN", accessToken, cookieOptions);
     res.cookie("REFRESH_TOKEN", refreshToken, cookieOptions);
-    res.status(200).send({ message: "User logged In Successfully" });
+    res.status(200).send({ message: "User logged In Successfully", user:{payload} });
   } 
   
   catch (error) {

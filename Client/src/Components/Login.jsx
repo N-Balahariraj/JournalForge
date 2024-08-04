@@ -1,11 +1,13 @@
 import React, { useState } from "react";
-import { Link, useOutletContext } from "react-router-dom";
+import { Link, useNavigate} from "react-router-dom";
 import { loginValidation } from "../UtilFunctions/verifyCredentials";
 import Alert from "react-bootstrap/Alert";
+import Cookies from 'js-cookie'
 
-const Login = ({ setUser }) => {
+const Login = () => {
   // const [setUser] = useOutletContext()
   const [alert, setAlert] = useState(false);
+  const navigate = useNavigate()
 
   const handleLogin = (event) => {
     event.preventDefault();
@@ -17,7 +19,7 @@ const Login = ({ setUser }) => {
       return;
     }
 
-    fetch(`${process.env.REACT_APP_LOCALHOST}/api/Login`, {
+    fetch(`${import.meta.env.VITE_LOCALHOST}/api/Login`, {
       method: "POST",
       credentials: "include",
       body: JSON.stringify({
@@ -30,8 +32,9 @@ const Login = ({ setUser }) => {
     })
       .then((response) => response.json())
       .then((data) => {
-        setUser(data.User.name);
         console.log(data);
+        Cookies.set('authStatus',data.user)
+        navigate('/journals')
       })
       .catch((err) => {
         setAlert(true)
@@ -70,7 +73,7 @@ const Login = ({ setUser }) => {
               <button className="login-btn">Login</button>
               <p>
                 New User?{" "}
-                <Link to="/Profile" className="text-[#c9f471]">
+                <Link to="/signup" className="text-[#c9f471]">
                   Sign up
                 </Link>
               </p>

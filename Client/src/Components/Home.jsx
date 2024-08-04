@@ -15,7 +15,7 @@ export default function Home() {
                 </div>
                 <div className='w-[100%] flex flex-col items-center gap-2 self-start'>
                     <span className='w-[100%] text-center text-xl'>Join a Global Community of Scholars and Innovators in Pushing the Boundaries of Knowledge</span>
-                    <Link to={"/Journals"} className='w-[20%] bg-[#caf173] p-2 rounded-full font-semibold text-center'>Start Exploring</Link>
+                    <Link to={"/journals"} className='w-[20%] bg-[#caf173] p-2 rounded-full font-semibold text-center'>Start Exploring</Link>
                 </div>
             </div>
         </div>

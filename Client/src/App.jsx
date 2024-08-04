@@ -1,8 +1,9 @@
 // Style sheets
 import "./App.css";
+import "bootstrap/dist/css/bootstrap.min.css";
 
 // Packages
-import React, {useState} from 'react'
+import React, { useState } from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 
 //Components
@@ -15,17 +16,16 @@ import Login from "./Components/Login.jsx";
 import Signup from "./Components/SignUp.jsx";
 import Layout from "./UtilComponents/Layout.jsx";
 import ProtectedRoute from "./UtilComponents/ProtectedRoute.jsx";
+import Profile from "./Components/Profile.jsx";
 
 function App() {
-
   const [searchText, setSearchText] = useState("search");
-  const [user, setUser] = useState("Profile");
-  console.log(searchText)
+  console.log(searchText);
 
   return (
     <Router>
       <Routes>
-        <Route path="/login" element={<Login />}></Route>
+        <Route path="/login" element={<Login/>}></Route>
         <Route path="/signup" element={<Signup />}></Route>
         <Route
           path="/"
@@ -55,8 +55,8 @@ function App() {
           path="/journals"
           element={
             <ProtectedRoute>
-              <Layout setSearchText={setSearchText} user={user}>
-                <Journals searchText={searchText}/>
+              <Layout setSearchText={setSearchText} >
+                <Journals searchText={searchText} />
               </Layout>
             </ProtectedRoute>
           }
@@ -67,6 +67,16 @@ function App() {
             <ProtectedRoute>
               <Layout>
                 <Publish />
+              </Layout>
+            </ProtectedRoute>
+          }
+        ></Route>
+        <Route
+          path="/profile"
+          element={
+            <ProtectedRoute>
+              <Layout>
+                <Profile />
               </Layout>
             </ProtectedRoute>
           }
