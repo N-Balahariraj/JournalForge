@@ -2,17 +2,22 @@ import React from "react";
 import { FaSearch } from "react-icons/fa";
 import { IoIosJournal } from "react-icons/io";
 import { IoPersonCircle } from "react-icons/io5";
-import { Link, useLocation } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import Dropdown from "react-bootstrap/Dropdown";
 import SplitButton from "react-bootstrap/SplitButton";
-import { MdEdit, MdLogout } from "react-icons/md";
+import { MdEdit, MdLogin, MdLogout } from "react-icons/md";
+import Cookie from "js-cookie";
+import { Button } from "react-bootstrap";
 
-export default function NavBar({ setSearchText, user }) {
+export default function NavBar({ setSearchText }) {
   const location = useLocation();
+  const navigate = useNavigate();
+  const authStatus = Cookie.get("authStatus");
+  const user = JSON.parse(localStorage.getItem("user"))?.name;
   return (
     <nav className="Navbar">
       <span className="w-[5%] h-[50%] text-center text-2xl font-bold">JF</span>
-      {location.pathname === '/journals' && (
+      {location.pathname === "/journals" && (
         <div className="w-[40%] h-[50%] flex items-center justify-around overflow-hidden border-2 border-black rounded-full">
           <input
             type="text"
@@ -50,14 +55,31 @@ export default function NavBar({ setSearchText, user }) {
           <MdEdit />
           Profile
         </Dropdown.Item>
-        <Dropdown.Item
-          as={Link}
-          to="/login"
-          className="flex items-center gap-2 hover:bg-[#caf173]"
-        >
-          <MdLogout />
-          {user ? "Logout" : "Login"}
-        </Dropdown.Item>
+        {authStatus ? (
+          <Dropdown.Item
+            as={Button}
+            variant='danger'
+            className="flex items-center gap-2 hover:bg-[#caf173]"
+            onClick={(e) => {
+              e.preventDefault();
+              Cookie.set("authStatus", false);
+              localStorage.removeItem("user");
+              navigate('/login')
+            }}
+          >
+            <MdLogout />
+            Logout
+          </Dropdown.Item>
+        ) : (
+          <Dropdown.Item
+            as={Link}
+            to="/login"
+            className="flex items-center gap-2 hover:bg-[#caf173]"
+          >
+            <MdLogin />
+            Login
+          </Dropdown.Item>
+        )}
       </SplitButton>
     </nav>
   );

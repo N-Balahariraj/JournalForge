@@ -3,10 +3,8 @@ import { Navigate, useLocation } from 'react-router-dom';
 import Cookies from "js-cookie";
 
 const ProtectedRoute = ({ children }) => {
-//   const authStatus = Cookies.get("authStatus");
-  const authStatus = true;
+  const authStatus = Cookies.get("authStatus");
   const location = useLocation();
-  console.log(authStatus)
 
   if (!authStatus) {
     return <Navigate to="/login" state={{ from: location }} replace />;

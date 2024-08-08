@@ -7,44 +7,38 @@ import Alert from "react-bootstrap/Alert";
 const Signup = () => {
   const [alert, setAlert] = useState(false);
 
-  const handleSignUp = (event) => {
-    event.preventDefault();
-    const name = event.target[0].value;
-    const email = event.target[1].value;
-    const password = event.target[2].value;
-
-    if (!registerValidation(name, email, password)) {
-      setAlert(true);
-      return;
-    }
-
-    fetch(`${import.meta.env.VITE_LOCALHOST}/api/Register`, {
-      method: "POST",
-      body: JSON.stringify({
-        name: name,
-        email: email,
-        password: password,
-      }),
-      headers: {
-        "Content-type": "application/json; charset=UTF-8",
-      },
-    })
-      .then((response) => response.json())
-      .then((data) => setUser(data.name));
-  };
-
   return (
     <>
       {alert && (
         <Alert variant="danger" onClose={() => setAlert(false)} dismissible>
-          Input valid Credentials !!!
+          {alert}
         </Alert>
       )}
       <div className="signup-container">
         <div className="signup-box">
           <div className="signup-left">
             <h2 className=" text-3xl font-semibold">Sign up</h2>
-            <form className="signup-content" onSubmit={handleSignUp}>
+            <form
+              className="signup-content"
+              onSubmit={async (e) => {
+                e.preventDefault();
+                const name = e.target[0].value;
+                const email = e.target[1].value;
+                const password = e.target[2].value;
+                const isValidCredits = registerValidation(
+                  name,
+                  email,
+                  password
+                );
+                if (!isValidCredits) {
+                  setAlert(isValidCredits);
+                  return;
+                }
+                const status = await register(name, email, password);
+                setUser(status.name)
+                setAlert(`Welcome ${status.name} to JournalForge`);
+              }}
+            >
               <div className="group">
                 <p>Name:</p>
                 <input type="text" placeholder="Your Name"></input>

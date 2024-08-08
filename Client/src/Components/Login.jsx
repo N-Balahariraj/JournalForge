@@ -2,51 +2,17 @@ import React, { useState } from "react";
 import { Link, useNavigate} from "react-router-dom";
 import { loginValidation } from "../UtilFunctions/verifyCredentials";
 import Alert from "react-bootstrap/Alert";
-import Cookies from 'js-cookie'
+import { login } from "../UtilFunctions/users.api";
 
 const Login = () => {
-  // const [setUser] = useOutletContext()
   const [alert, setAlert] = useState(false);
   const navigate = useNavigate()
-
-  const handleLogin = (event) => {
-    event.preventDefault();
-    const email = event.target[0].value;
-    const password = event.target[1].value;
-
-    if (!loginValidation(email, password)) {
-      setAlert(true);
-      return;
-    }
-
-    fetch(`${import.meta.env.VITE_LOCALHOST}/api/Login`, {
-      method: "POST",
-      credentials: "include",
-      body: JSON.stringify({
-        email: email,
-        password: password,
-      }),
-      headers: {
-        "Content-type": "application/json; charset=UTF-8",
-      },
-    })
-      .then((response) => response.json())
-      .then((data) => {
-        console.log(data);
-        Cookies.set('authStatus',data.user)
-        navigate('/journals')
-      })
-      .catch((err) => {
-        setAlert(true)
-        console.log(err)
-      });
-  };
 
   return (
     <>
       {alert && (
         <Alert variant="danger" onClose={() => setAlert(false)} dismissible>
-          Input valid login credentials
+          {alert}
         </Alert>
       )}
       <div className="login-container">
@@ -54,7 +20,23 @@ const Login = () => {
           <div className="login-left">
             <img className="login-img" src="/login.jpg" />
           </div>
-          <form className="login-right" onSubmit={handleLogin}>
+          <form className="login-right" onSubmit={async e=>{
+            e.preventDefault();
+            const email = e.target[0].value;
+            const password = e.target[1].value;
+            const isValidCredits = loginValidation(email, password)
+            if (!isValidCredits) {
+              setAlert(isValidCredits);
+              return;
+            }
+            const status = await login(email,password)
+            if(status.code === 200){
+              navigate('/journals')
+            }
+            else{
+              setAlert(status.message)
+            }
+          }}>
             <div className="login-top">
               <p className="login-head">Login</p>
               <p>Welcome back!</p>
