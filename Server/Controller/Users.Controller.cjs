@@ -75,7 +75,17 @@ exports.Login = async (req, res) => {
 
     res.cookie("ACCESS_TOKEN", accessToken, cookieOptions);
     res.cookie("REFRESH_TOKEN", refreshToken, cookieOptions);
-    res.status(200).send({ message: "User logged In Successfully", user:{payload} });
+    res.status(200).send({ 
+      message: "User logged In Successfully", 
+      user:{
+        name : user.name,
+        email : user.email,
+        organization : user.organization,
+        address : user.address,
+        phone : user.phone,
+        journals : user.journals
+      }
+    });
   } 
   
   catch (error) {
@@ -88,13 +98,13 @@ exports.Login = async (req, res) => {
 
 exports.EditProfile = async (req, res) => {
   const id = req.user.id;
-  const { name, email, password } = req.body;
+  const { name, email, organization, address, phone } = req.body;
 
   try {
     const user = await UserModel.findByIdAndUpdate(
       { _id: id },
       {
-        $set: { name: name, email: email, password: password },
+        $set: { name, email, organization, address, phone },
       },
       {new : true}
     );
@@ -139,16 +149,33 @@ exports.DeleteAcc = async (req, res) => {
   }
 };
 
+exports.Logout = async (req, res) => {
+  res.clearCookie("ACCESS_TOKEN", cookieOptions);
+  res.clearCookie("REFRESH_TOKEN", cookieOptions);
+  res.status(200).send({ message: "User logged out successfully" });
+}
+
 exports.refreshToken = async (req, res) => {
   const payload = {
     id : req.user.id,
     name : req.user.name
   }
-  const freshToken = jwt.sign(payload, process.env.ACCESS_TOKEN_SECRET, {
-    expiresIn: "15m",
-  });
 
-  res.cookie("ACCESS_TOKEN", freshToken, cookieOptions);
+  try{
+    const freshToken = jwt.sign(payload, process.env.ACCESS_TOKEN_SECRET, {
+      expiresIn: "15m",
+    });
+  
+    res.cookie("ACCESS_TOKEN", freshToken, cookieOptions);
+  
+    res.status(200).send({ message: "The token refreshed successfully" });
+  }
 
-  res.status(200).send({ message: "The token refreshed successfully" });
+  catch(error){
+    console.log("error : ", error);
+    res.status(500).send({
+      message: "Server error. Unable to refresh the token, try again later",
+      error : error.message
+    });
+  }
 };

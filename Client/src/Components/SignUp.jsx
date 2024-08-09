@@ -3,9 +3,11 @@ import { Link } from "react-router-dom";
 import { useOutletContext } from "react-router-dom";
 import { registerValidation } from "../UtilFunctions/verifyCredentials";
 import Alert from "react-bootstrap/Alert";
+import { BeatLoader } from "react-spinners";
 
 const Signup = () => {
   const [alert, setAlert] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   return (
     <>
@@ -51,8 +53,9 @@ const Signup = () => {
                 <p>Password:</p>
                 <input type="password" placeholder="Your Password"></input>
               </div>
-              <button className="signup-btn bg-[#c9f471]" type="submit">
-                Register
+              <button className="signup-btn bg-[#c9f471]" type="submit" disabled={loading} onClick={()=>setLoading(true)}>
+              {loading?<BeatLoader size={10} loading={loading} /> : <span>login</span> }
+                
               </button>
               <div className="group">
                 <p>

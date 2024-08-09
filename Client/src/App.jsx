@@ -26,10 +26,12 @@ function App() {
   useEffect(() => {
     const interval = setInterval(() => {
       refreshAccessToken();
-    }, 14 * 60 * 1000); 
+    }, 14* 60 * 1000); 
     loadJournals()
     return () => clearInterval(interval); 
   }, []);
+
+  // 1. How to overcome the nature of useState hook `/src/components/journals.jsx`
 
   return (
     <Router>

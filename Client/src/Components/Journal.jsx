@@ -19,7 +19,7 @@ export default function Journal({
     <div
       className="w-[90%] h-[50%] flex border-2 rounded-lg"
       onClick={() => {
-        pickJournal(id);
+        pickJournal({ id, title, pic, desc });
       }}
     >
       <div className="w-[45%] flex flex-col items-center border-2 rounded-md">

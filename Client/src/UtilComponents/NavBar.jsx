@@ -8,6 +8,7 @@ import SplitButton from "react-bootstrap/SplitButton";
 import { MdEdit, MdLogin, MdLogout } from "react-icons/md";
 import Cookie from "js-cookie";
 import { Button } from "react-bootstrap";
+import { logout } from "../UtilFunctions/users.api";
 
 export default function NavBar({ setSearchText }) {
   const location = useLocation();
@@ -62,9 +63,8 @@ export default function NavBar({ setSearchText }) {
             className="flex items-center gap-2 hover:bg-[#caf173]"
             onClick={(e) => {
               e.preventDefault();
-              Cookie.set("authStatus", false);
-              localStorage.removeItem("user");
-              navigate('/login')
+              logout();
+              navigate('/')
             }}
           >
             <MdLogout />

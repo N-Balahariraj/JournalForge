@@ -1,12 +1,14 @@
 import React, { useState } from "react";
-import { Link, useNavigate} from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { loginValidation } from "../UtilFunctions/verifyCredentials";
 import Alert from "react-bootstrap/Alert";
 import { login } from "../UtilFunctions/users.api";
+import { BeatLoader } from "react-spinners";
 
 const Login = () => {
   const [alert, setAlert] = useState(false);
-  const navigate = useNavigate()
+  const [loading, setLoading] = useState(false);
+  const navigate = useNavigate();
 
   return (
     <>
@@ -20,23 +22,25 @@ const Login = () => {
           <div className="login-left">
             <img className="login-img" src="/login.jpg" />
           </div>
-          <form className="login-right" onSubmit={async e=>{
-            e.preventDefault();
-            const email = e.target[0].value;
-            const password = e.target[1].value;
-            const isValidCredits = loginValidation(email, password)
-            if (!isValidCredits) {
-              setAlert(isValidCredits);
-              return;
-            }
-            const status = await login(email,password)
-            if(status.code === 200){
-              navigate('/journals')
-            }
-            else{
-              setAlert(status.message)
-            }
-          }}>
+          <form
+            className="login-right"
+            onSubmit={async (e) => {
+              e.preventDefault();
+              const email = e.target[0].value;
+              const password = e.target[1].value;
+              const isValidCredits = loginValidation(email, password);
+              if (!isValidCredits) {
+                setAlert(isValidCredits);
+                return;
+              }
+              const status = await login(email, password);
+              if (status.code === 200) {
+                navigate("/");
+              } else {
+                setAlert(status.message);
+              }
+            }}
+          >
             <div className="login-top">
               <p className="login-head">Login</p>
               <p>Welcome back!</p>
@@ -52,7 +56,13 @@ const Login = () => {
               </div>
             </div>
             <div className="login-bottom">
-              <button className="login-btn">Login</button>
+              <button
+                className="login-btn flex items-center justify-between gap-4"
+                disabled={loading}
+                onClick={(e) => setLoading(true)}
+              >
+                {loading?<BeatLoader size={10} loading={loading} /> : <span>login</span> }
+              </button>
               <p>
                 New User?{" "}
                 <Link to="/signup" className="text-[#c9f471]">

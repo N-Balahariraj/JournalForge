@@ -6,5 +6,6 @@ module.exports = (app) => {
     app.post('/api/Login',UserController.Login)
     app.put('/api/EditProfile',verifyToken.verifyAccessToken,UserController.EditProfile)
     app.delete('/api/DeleteAcc',verifyToken.verifyAccessToken,UserController.DeleteAcc)
+    app.get('/api/Logout',UserController.Logout)
     app.get('/api/refreshToken',verifyToken.verifyRefreshToken,UserController.refreshToken)
 }

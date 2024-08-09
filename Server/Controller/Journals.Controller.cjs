@@ -5,6 +5,7 @@ const userModal = require("../Model/Users.Model.cjs");
 exports.create = async (req, res) => {
   const {
     title,
+    author,
     pic = "https://www.agastiyarzones.com/assets/img/service/Journal_Publication.png",
     desc,
   } = req.body;
@@ -12,6 +13,7 @@ exports.create = async (req, res) => {
   try {
     const newJournal = await JournalModel.create({
       title,
+      author,
       pic,
       desc,
     });
@@ -78,13 +80,13 @@ exports.read = async (req, res) => {
 // Update
 exports.editJournal = async (req, res) => {
   const oriTitle = req.params.title;
-  const { title, pic, desc } = req.body;
+  const { title, pic, desc, author } = req.body;
 
   try {
     const editedJournal = await JournalModel.findOneAndUpdate(
       { title : oriTitle },
       {
-        $set: { title, pic, desc },
+        $set: { title, pic, desc, author },
       },
       { new: true }
     );
