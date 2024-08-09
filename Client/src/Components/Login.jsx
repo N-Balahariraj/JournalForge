@@ -58,8 +58,8 @@ const Login = () => {
             <div className="login-bottom">
               <button
                 className="login-btn flex items-center justify-between gap-4"
-                disabled={loading}
                 onClick={(e) => setLoading(true)}
+                type="submit"
               >
                 {loading?<BeatLoader size={10} loading={loading} /> : <span>login</span> }
               </button>
