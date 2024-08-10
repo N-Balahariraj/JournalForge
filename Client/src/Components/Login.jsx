@@ -59,7 +59,7 @@ const Login = () => {
               <button
                 className="login-btn flex items-center justify-between gap-4"
                 onClick={(e) => setLoading(true)}
-                type="submit"
+                // type="submit"
               >
                 {loading?<BeatLoader size={10} loading={loading} /> : <span>login</span> }
               </button>

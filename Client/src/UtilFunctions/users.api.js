@@ -124,8 +124,6 @@ export async function logout(){
   try {
     const res = await fetch(`${localHost}/api/logout`,{credentials:'include'})
     if(!res.ok) throw new Error(`${res.status} : ${res.statusText}`)
-    const data = await res.json()
-    console.log(data)
     Cookies.remove("authStatus");
     localStorage.removeItem("user");
   } 

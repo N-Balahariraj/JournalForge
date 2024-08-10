@@ -31,8 +31,6 @@ function App() {
     return () => clearInterval(interval); 
   }, []);
 
-  // 1. How to overcome the nature of useState hook `/src/components/journals.jsx`
-
   return (
     <Router>
       <Routes>

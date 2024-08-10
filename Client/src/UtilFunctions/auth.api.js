@@ -1,6 +1,8 @@
 import Cookies from "js-cookie";
+import { logout } from "./users.api";
 
 const localHost = import.meta.env.VITE_LOCALHOST;
+const globalHost = import.meta.env.VITE_GLOBALHOST;
 
 export async function refreshAccessToken() {
   try {
@@ -10,7 +12,9 @@ export async function refreshAccessToken() {
     console.log("Access token refreshed:", data);
     Cookies.set("authStatus",true)
   } catch (error) {
+    logout();
     Cookies.remove("authStatus");
+    localStorage.removeItem("user");
     console.log("Error refreshing access token:", error);
   }
 }
