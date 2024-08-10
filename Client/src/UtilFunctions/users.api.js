@@ -1,11 +1,10 @@
 import Cookies from "js-cookie";
 
-const localHost = import.meta.env.VITE_LOCALHOST;
-const globalHost = import.meta.env.VITE_GLOBALHOST;
+const apiUrl = import.meta.env.VITE_API;
 
 export async function register(name, email, password) {
   try {
-    const res = await fetch(`${localHost}/api/Register`, {
+    const res = await fetch(`${apiUrl}/api/Register`, {
       method: "POST",
       credentials: 'include',
       body: JSON.stringify({
@@ -30,7 +29,7 @@ export async function register(name, email, password) {
 
 export async function login(email, password) {
   try {
-    const res = await fetch(`${localHost}/api/Login`, {
+    const res = await fetch(`${apiUrl}/api/Login`, {
       method: "POST",
       credentials: "include",
       body: JSON.stringify({
@@ -63,7 +62,7 @@ export async function editProfile(
   phone
 ) {
   try {
-    const res = await fetch(`${localHost}/api/editProfile`, {
+    const res = await fetch(`${apiUrl}/api/editProfile`, {
       method: "PUT",
       credentials: 'include',
       headers: {
@@ -96,7 +95,7 @@ export async function editProfile(
 export async function delAcc () {
     try {
       const res = await fetch(
-        `${localHost}/api/deleteAcc`,
+        `${apiUrl}/api/deleteAcc`,
         {
           method: "DELETE",
           credentials: 'include',
@@ -122,7 +121,7 @@ export async function delAcc () {
 
 export async function logout(){
   try {
-    const res = await fetch(`${localHost}/api/logout`,{credentials:'include'})
+    const res = await fetch(`${apiUrl}/api/logout`,{credentials:'include'})
     if(!res.ok) throw new Error(`${res.status} : ${res.statusText}`)
     Cookies.remove("authStatus");
     localStorage.removeItem("user");

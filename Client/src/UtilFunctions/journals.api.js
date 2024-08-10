@@ -1,9 +1,8 @@
-const localHost = import.meta.env.VITE_LOCALHOST;
-const globalHost = import.meta.env.VITE_GLOBALHOST;
+const apiUrl = import.meta.env.VITE_API;
 
 export async function fetchJournals() {
   try {
-    const res = await fetch(`${localHost}/Journals`, { credentials: "include" });
+    const res = await fetch(`${apiUrl}/Journals`, { credentials: "include" });
     const data = await res.json();
     if (!res.ok) throw new Error(`${res.status} : ${res.statusText}`);
     return data;
@@ -16,7 +15,7 @@ export async function fetchJournals() {
 
 export async function publishJournal(title, desc, author, email) {
   try {
-    const res = await fetch(`${localHost}/Journals/Publish`, {
+    const res = await fetch(`${apiUrl}/Journals/Publish`, {
       method: "POST",
       credentials: "include",
       headers: {
@@ -41,7 +40,7 @@ export async function publishJournal(title, desc, author, email) {
 
 export async function updateJournal(title, desc, author, email) {
     try {
-        const res = await fetch(`${localHost}/Journals/Edit/${title}`,{
+        const res = await fetch(`${apiUrl}/Journals/Edit/${title}`,{
             method : 'PUT',
             credentials : 'include',
             headers :{
@@ -66,7 +65,7 @@ export async function updateJournal(title, desc, author, email) {
 
 export async function removeJournal(title){
     try {
-        const res = await fetch(`${localHost}/Journals/remove/${title}`,{
+        const res = await fetch(`${apiUrl}/Journals/remove/${title}`,{
             method : 'DELETE',
             credentials : 'include',
         })

@@ -53,7 +53,7 @@ const Signup = () => {
                 <p>Password:</p>
                 <input type="password" placeholder="Your Password"></input>
               </div>
-              <button className="signup-btn bg-[#c9f471]" type="submit" onClick={()=>setLoading(true)}>
+              <button className="signup-btn bg-[#c9f471]" onClick={()=>setLoading(true)}>
               {loading?<BeatLoader size={10} loading={loading} /> : <span>login</span> }
                 
               </button>
