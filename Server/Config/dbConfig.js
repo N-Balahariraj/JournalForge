@@ -7,10 +7,11 @@ const dbUrl = process.env.DATABASE_URL
 async function ConnectToDb(){
     try{
         await mongoose.connect(dbUrl) 
-        console.log("DB Connection established ;)")
+        console.log("DB Connection established :)")
     }
     catch(e){
         console.log("DB Connection Couldn't be established")
+        console.log(e);
     }
 }
 
